@@ -301,7 +301,6 @@ func (s *Server) handleTeamAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Маппим DTO → доменные users
 	members := make([]domain.User, 0, len(req.Members))
 	for _, m := range req.Members {
 		u, err := domain.NewUser(m.UserID, m.Username, req.TeamName, m.IsActive)
@@ -523,6 +522,5 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Можно добавить простой ping к БД, если хочется.
 	s.writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 }
