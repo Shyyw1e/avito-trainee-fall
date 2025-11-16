@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Shyyw1e/avito-trainee-fall/internal/domain"
 	"github.com/Shyyw1e/avito-trainee-fall/internal/platform/log"
@@ -96,8 +97,14 @@ func (s *PRService) CreatePRWithAutoAssign(
 		return nil, err
 	}
 
+	if created == nil {
+		s.logger.Error("pr_create_usecase_nil_result", "pr_id", prID)
+		return nil, fmt.Errorf("internal error: pr %q was not created", prID)
+	}
+
 	return created, nil
 }
+
 
 func (s *PRService) MergePR(
 	ctx context.Context,

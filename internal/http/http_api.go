@@ -256,28 +256,33 @@ func userToDTO(u *domain.User) userDTO {
 }
 
 func prToDTO(p *domain.PullRequest) pullRequestDTO {
-	var created *time.Time
-	if !p.CreatedAt.IsZero() {
-		t := p.CreatedAt
-		created = &t
-	}
+    if p == nil {
+        return pullRequestDTO{}
+    }
 
-	var merged *time.Time
-	if !p.MergedAt.IsZero() {
-		t := p.MergedAt
-		merged = t
-	}
+    var created *time.Time
+    if !p.CreatedAt.IsZero() {
+        t := p.CreatedAt
+        created = &t
+    }
 
-	return pullRequestDTO{
-		ID:                p.ID,
-		Name:              p.Name,
-		AuthorID:          p.AuthorID,
-		Status:            string(p.Status),
-		AssignedReviewers: append([]string(nil), p.AssignedReviewers...),
-		CreatedAt:         created,
-		MergedAt:          merged,
-	}
+    var merged *time.Time
+    if p.MergedAt != nil {
+        t := p.MergedAt
+        merged = t
+    }
+
+    return pullRequestDTO{
+        ID:                p.ID,
+        Name:              p.Name,
+        AuthorID:          p.AuthorID,
+        Status:            string(p.Status),
+        AssignedReviewers: append([]string(nil), p.AssignedReviewers...),
+        CreatedAt:         created,
+        MergedAt:          merged,
+    }
 }
+
 
 func prShortToDTO(p domain.PullRequest) pullRequestShortDTO {
 	return pullRequestShortDTO{
