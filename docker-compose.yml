@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: avito-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  migrate:
+    image: migrate/migrate
+    container_name: avito-migrate
+    depends_on:
+      - postgres
+    volumes:
+      - ./migrations:/migrations
+    entrypoint:
+      [
+        "sh", "-c",
+        "sleep 5 && migrate -path=/migrations -database 'postgres://postgres:${DB_PASSWORD}@postgres:5432/${DB_NAME}?sslmode=disable' up"
+      ]
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: avito-pr-service
+    restart: unless-stopped
+    environment:
+      POSTGRES_DSN: postgres://postgres:${DB_PASSWORD}@postgres:5432/${DB_NAME}?sslmode=disable
+
+      HTTP_PORT: ${HTTP_PORT}
+      LOG_LEVEL: ${LOG_LEVEL}
+      MIGRATIONS_DIR: /app/migrations
+      REQUEST_TIMEOUT_MS: ${REQUEST_TIMEOUT_MS}
+      READ_HEADER_TIMEOUT_MS: ${READ_HEADER_TIMEOUT_MS}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "${HTTP_PORT}:8080"
+
+volumes:
+  postgres_data:
