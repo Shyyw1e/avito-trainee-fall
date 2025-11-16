@@ -3,6 +3,7 @@ module github.com/Shyyw1e/avito-trainee-fall
 go 1.24.1
 
 require (
+	github.com/go-chi/chi/v5 v5.2.3
 	github.com/jackc/pgx/v5 v5.7.6
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.9.0
