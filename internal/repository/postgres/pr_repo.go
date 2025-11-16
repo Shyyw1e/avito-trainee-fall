@@ -319,3 +319,42 @@ ORDER BY slot;
 
 	return reviewers, nil
 }
+
+func (r *PRRepo) GetAssignStats(
+	ctx context.Context,
+	db repository.DBExecutor,
+) (map[string]int, error) {
+
+	q := `
+SELECT user_id, COUNT(*) AS cnt
+FROM pr_reviewers
+GROUP BY user_id;
+`
+
+	rows, err := db.Query(ctx, q)
+	if err != nil {
+		r.Logger.Error("pr_get_stats_failed", "err", err)
+		return nil, fmt.Errorf("get assign stats: %w", err)
+	}
+	defer rows.Close()
+
+	stats := make(map[string]int)
+
+	for rows.Next() {
+		var uid string
+		var count int
+
+		if err := rows.Scan(&uid, &count); err != nil {
+			r.Logger.Error("pr_scan_stats_failed", "err", err)
+			return nil, fmt.Errorf("scan assign stats: %w", err)
+		}
+
+		stats[uid] = count
+	}
+
+	if rows.Err() != nil {
+		return nil, fmt.Errorf("rows error: %w", rows.Err())
+	}
+
+	return stats, nil
+}

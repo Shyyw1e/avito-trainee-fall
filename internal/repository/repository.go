@@ -33,6 +33,7 @@ type UserRepository interface {
 
 type PRRepository interface {
 	CreatePR(ctx context.Context, db DBExecutor, pr *domain.PullRequest) error
+	GetAssignStats(ctx context.Context, db DBExecutor) (map[string]int, error)
 	GetPRByID(ctx context.Context, db DBExecutor, prID string) (*domain.PullRequest, []string, error)
 	GetPRForUpdate(ctx context.Context, db DBExecutor, prID string) (*domain.PullRequest, []string, error)
 	SetMerged(ctx context.Context, db DBExecutor, pr *domain.PullRequest) error
