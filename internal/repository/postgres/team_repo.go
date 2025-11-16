@@ -97,6 +97,7 @@ ORDER BY user_id;`
 			r.Logger.Error("team_get_members_scan_failed", "team", teamName, "err", err)
 			return nil, fmt.Errorf("scan team members for %q: %w", teamName, err)
 		}
+		users = append(users, u)
 	}
 
 	if err := rows.Err(); err != nil {
