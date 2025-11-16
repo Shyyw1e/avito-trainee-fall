@@ -24,7 +24,7 @@ type PullRequest struct {
 
 func NewPullRequest(id, name, authorID string) (*PullRequest, error) {
 	if id == "" || name == "" || authorID == "" {
-		return nil, fmt.Errorf("empty parameter: id=%q, name=%q, authorID=%q", id, name, authorID)
+		return nil, fmt.Errorf("empty parameter")
 	}
 
 	now := time.Now()
